@@ -1,5 +1,6 @@
 from operator import itemgetter
 import cv2
+import os, shutil
 
 
 class Sort:
@@ -9,12 +10,11 @@ class Sort:
         self.temp_cord = []
         self.pre = 0
 
-        self.rowAlign()
-        self.finalAlign()
-        self.imageCrop()
+    def __del__(self):
+        print("Destroyed")
 
-    def rowAlign(self):
-        with open('./result/res_img.txt') as f:
+    def rowAlign(self, coordinates_text):
+        with open(coordinates_text) as f:
             lines = f.readlines()
 
         for i in lines:
@@ -35,23 +35,25 @@ class Sort:
             columns_sort = sorted(i, key=itemgetter(0))
             self.final_cord.append(columns_sort)
 
-    def imageCrop(self):
-        img = cv2.imread('img.jpeg')
+    def imageCrop(self, original_image, name_of_folder):
+        os.mkdir('./Text_Detection/crop_images/' + name_of_folder)
+        img = cv2.imread(original_image)
         a = 1
         for i in self.final_cord:
             b = 1
             for j in i:
-                print(str(a)+"."+str(b))
+                print(str(a) + "." + str(b))
                 print(j)
                 crop_img = img[j[1]:j[5], j[0]:j[2]]
                 try:
-                    cv2.imwrite('./crop_images/' + str(a)+"."+str(b) + '.jpg', crop_img)
+                    cv2.imwrite('./Text_Detection/crop_images/' + name_of_folder + "/" + str(a) + "." + str(b) + '.jpg',
+                                crop_img)
                 except Exception as e:
                     print(e)
-                b+=1
+                b += 1
 
-            print()
-            a+=1
+            # print()
+            a += 1
 
 
-sort = Sort()
+
