@@ -20,7 +20,7 @@ class Sort:
         for i in lines:
             res = [int(i) for i in i[:-1].split(',')]
 
-            if self.pre != 0 and (res[1] - self.pre) > 5:
+            if self.pre != 0 and (res[1] - self.pre) >= 50:
                 self.rows.append(self.temp_cord)
                 self.temp_cord = []
                 self.temp_cord.append(res)
@@ -39,11 +39,10 @@ class Sort:
         os.mkdir('./Text_Detection/crop_images/' + name_of_folder)
         img = cv2.imread(original_image)
         a = 1
+
         for i in self.final_cord:
             b = 1
             for j in i:
-                print(str(a) + "." + str(b))
-                print(j)
                 crop_img = img[j[1]:j[5], j[0]:j[2]]
                 try:
                     cv2.imwrite('./Text_Detection/crop_images/' + name_of_folder + "/" + str(a) + "." + str(b) + '.jpg',

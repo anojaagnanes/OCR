@@ -1,10 +1,13 @@
-from Text_Detection.test import text_detect
-from Text_Detection.sort_image_crop import Sort
-from Text_Recognization import demo
+from Text_Detection import text_detect
 import os, shutil
+from Text_Detection.sort_image_crop import Sort
+from Text_Recognization import text_recognize
 from flask import Flask, request, Response, jsonify
 
 app = Flask(__name__)
+
+detect = text_detect.Detect()
+recognize = text_recognize.Recognize()
 
 
 @app.route('/uploadImages', methods=['GET', 'POST'])
@@ -43,7 +46,7 @@ def upload_images():
 
 @app.route('/ocr', methods=['GET', 'POST'])
 def ocr():
-    text_detect()
+    detect.getDetection()
 
     if not os.path.isdir('./Text_Detection/crop_images'):
         os.mkdir('./Text_Detection/crop_images')
@@ -82,16 +85,17 @@ def ocr():
                 for u in new_set_of_images:
                     shutil.copy('./Text_Detection/crop_images/' + str(i) + "/" + u, './Text_Recognization/demo_images/')
 
-                text_line = demo.textRecognize()
+                text_line = recognize.getRecognize()
                 data["whole_text"] = data["whole_text"] + '\n' + text_line
                 shutil.rmtree('./Text_Recognization/demo_images/')
                 os.mkdir('./Text_Recognization/demo_images/')
                 temp_images = []
 
         final_data.append(data)
-        print(data)
-    final_data_json = {'Data': final_data}
+        print(data["Images Name"])
+        print(data["whole_text"])
 
+    final_data_json = {'Data': final_data}
     return jsonify({'message': final_data_json})
 
 
